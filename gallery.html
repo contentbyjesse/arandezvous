@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Arandezvous</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .gallery-wrap { max-width: 1400px; margin: 0 auto; padding: 0 48px 120px; }
+
+  .filter-bar {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    padding: 32px 0 56px;
+    border-bottom: 1px solid var(--light-gray);
+    margin-bottom: 56px;
+  }
+  .filter-btn { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; background: transparent; color: var(--warm-gray); border: 1px solid var(--light-gray); padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover, .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* MASONRY */
+  .masonry {
+    columns: 3;
+    column-gap: 16px;
+  }
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--ink);
+  }
+  .masonry-item img {
+    width: 100%;
+    display: block;
+    filter: sepia(0.08) contrast(1.05);
+    opacity: 0.92;
+    transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s;
+  }
+  .masonry-item:hover img { transform: scale(1.03); opacity: 1; }
+  .masonry-item-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(26,24,20,0.75) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .masonry-item:hover .masonry-item-overlay { opacity: 1; }
+  .masonry-item-info {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 20px;
+    transform: translateY(8px);
+    opacity: 0;
+    transition: all 0.3s;
+  }
+  .masonry-item:hover .masonry-item-info { opacity: 1; transform: translateY(0); }
+  .masonry-item-loc { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,240,232,0.8); margin-bottom: 4px; }
+  .masonry-item-caption { font-family: 'Playfair Display', serif; font-size: 14px; font-style: italic; color: var(--paper); line-height: 1.4; }
+
+  /* LIGHTBOX */
+  .lightbox {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(26,24,20,0.95);
+    align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-img { max-height: 85vh; max-width: 85vw; object-fit: contain; filter: sepia(0.05); }
+  .lightbox-close { position: absolute; top: 24px; right: 40px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); background: none; border: none; cursor: pointer; transition: color 0.2s; }
+  .lightbox-close:hover { color: var(--paper); }
+  .lightbox-caption { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); text-align: center; }
+  .lightbox-caption-loc { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 6px; }
+  .lightbox-caption-text { font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; color: var(--paper); }
+  .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--warm-gray); background: none; border: none; cursor: pointer; padding: 16px; transition: color 0.2s; }
+  .lightbox-nav:hover { color: var(--paper); }
+  .lightbox-prev { left: 24px; }
+  .lightbox-next { right: 24px; }
+
+  @media (max-width: 900px) {
+    .gallery-wrap { padding: 0 16px 80px; }
+    .masonry { columns: 2; }
+  }
+  @media (max-width: 480px) {
+    .masonry { columns: 1; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Arandezvous ✦</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="blog.html">Journal</a></li>
+    <li><a href="gallery.html" class="active">Gallery</a></li>
+    <li><a href="gear.html">Gear</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="work.html">Work With Me</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="menu-close">Close ✕</button>
+  <a href="index.html">Home</a>
+  <a href="blog.html">Journal</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="gear.html">Gear</a>
+  <a href="about.html">About</a>
+  <a href="work.html">Work With Me</a>
+</div>
+
+<div class="gallery-wrap">
+  <div class="page-header" style="padding-left:0;padding-right:0;">
+    <p class="page-header-eyebrow">Shot on Fujifilm X100VI</p>
+    <h1 class="page-header-title">Photo<br><em>Archive.</em></h1>
+    <p class="page-header-sub">A visual field log. Everything shot carry-on only, no gear that doesn't earn its weight.</p>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active">All</button>
+    <button class="filter-btn">Markets</button>
+    <button class="filter-btn">Pottery</button>
+    <button class="filter-btn">Cooking</button>
+    <button class="filter-btn">People</button>
+    <button class="filter-btn">Streets</button>
+  </div>
+
+  <div class="masonry" id="masonry">
+    <div class="masonry-item" data-src="photos/DSCF0762.jpg" data-loc="Oaxaca Valley, MX" data-caption="The corn mural house. Blue tile paint, red gates.">
+      <img src="photos/DSCF0762.jpg" alt="Oaxaca Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Oaxaca Valley, MX</p><p class="masonry-item-caption">The corn mural house. Blue tile paint, red gates.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0876.jpg" data-loc="Tlacolula Valley, MX" data-caption="Grinding mole the way it has always been done.">
+      <img src="photos/DSCF0876.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Grinding mole the way it has always been done.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0949.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="The potters of the red clay workshop.">
+      <img src="photos/DSCF0949.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">The potters of the red clay workshop.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0817.jpg" data-loc="Tlacolula Valley, MX" data-caption="The comal never stops.">
+      <img src="photos/DSCF0817.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">The comal never stops.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0813.jpg" data-loc="Tlacolula Valley, MX" data-caption="Mole negro, deconstructed. Chilhuacle and company.">
+      <img src="photos/DSCF0813.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Mole negro, deconstructed. Chilhuacle and company.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0709.jpg" data-loc="Tlacolula Market, MX" data-caption="Pan de yema by the kilo.">
+      <img src="photos/DSCF0709.jpg" alt="Tlacolula Market, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market, MX</p><p class="masonry-item-caption">Pan de yema by the kilo.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0858.jpg" data-loc="Tlacolula Valley, MX" data-caption="Metate work under the gaze of the mural.">
+      <img src="photos/DSCF0858.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Metate work under the gaze of the mural.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0942.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="Wrapping barro rojo in yesterday's news.">
+      <img src="photos/DSCF0942.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">Wrapping barro rojo in yesterday's news.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0809.jpg" data-loc="Tlacolula Valley, MX" data-caption="Masa in every color the valley grows.">
+      <img src="photos/DSCF0809.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Masa in every color the valley grows.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0740.jpg" data-loc="Tlacolula Market, MX" data-caption="Plátanos machos into the woven bag.">
+      <img src="photos/DSCF0740.jpg" alt="Tlacolula Market, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market, MX</p><p class="masonry-item-caption">Plátanos machos into the woven bag.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0856.jpg" data-loc="Tlacolula Valley, MX" data-caption="Chiles negros waiting for the stone.">
+      <img src="photos/DSCF0856.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Chiles negros waiting for the stone.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0713.jpg" data-loc="Tlacolula Market, MX" data-caption="Market day negotiations.">
+      <img src="photos/DSCF0713.jpg" alt="Tlacolula Market, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market, MX</p><p class="masonry-item-caption">Market day negotiations.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0827.jpg" data-loc="Tlacolula Valley, MX" data-caption="The ingredient tray. Sesame, chiles, and patience.">
+      <img src="photos/DSCF0827.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">The ingredient tray. Sesame, chiles, and patience.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0944.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="Bubble wrap meets thousand-year-old technique.">
+      <img src="photos/DSCF0944.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">Bubble wrap meets thousand-year-old technique.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0927.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="Every piece packed by hand, ledger kept by hand.">
+      <img src="photos/DSCF0927.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">Every piece packed by hand, ledger kept by hand.</p></div>
+    </div>
+
+    <div class="masonry-item" data-src="photos/DSCF0763.jpg" data-loc="Tlacolula Valley, MX" data-caption="The cocina. Clay pots, oilcloth, papel picado.">
+      <img src="photos/DSCF0763.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">The cocina. Clay pots, oilcloth, papel picado.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lb-close">Close ✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
+  <img class="lightbox-img" id="lb-img" src="" alt="" />
+  <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
+  <div class="lightbox-caption">
+    <p class="lightbox-caption-loc" id="lb-loc"></p>
+    <p class="lightbox-caption-text" id="lb-cap"></p>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">Arandezvous ✦</span>
+  <span class="footer-copy">© 2025 — All rights reserved</span>
+  <div class="footer-social">
+    <a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  const items = Array.from(document.querySelectorAll('.masonry-item'));
+  let current = 0;
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbLoc = document.getElementById('lb-loc');
+  const lbCap = document.getElementById('lb-cap');
+
+  function openLightbox(idx) {
+    current = idx;
+    const item = items[idx];
+    lbImg.src = item.dataset.src;
+    lbLoc.textContent = item.dataset.loc;
+    lbCap.textContent = item.dataset.caption;
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  items.forEach((item, i) => item.addEventListener('click', () => openLightbox(i)));
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  document.getElementById('lb-prev').addEventListener('click', () => openLightbox((current - 1 + items.length) % items.length));
+  document.getElementById('lb-next').addEventListener('click', () => openLightbox((current + 1) % items.length));
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') openLightbox((current - 1 + items.length) % items.length);
+    if (e.key === 'ArrowRight') openLightbox((current + 1) % items.length);
+  });
+
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobile-menu').classList.add('open'));
+  document.getElementById('menu-close').addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
+</script>
+</body>
+</html>

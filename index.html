@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arandezvous — A Camera and a Carry-On</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-image-side {
+    position: relative;
+    background: var(--ink);
+    overflow: hidden;
+  }
+  .hero-image-side img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.85;
+    mix-blend-mode: luminosity;
+    filter: contrast(1.1) sepia(0.15);
+    transform: scale(1.05);
+    animation: slowzoom 20s ease-in-out infinite alternate;
+  }
+  @keyframes slowzoom { from { transform: scale(1.05); } to { transform: scale(1.12); } }
+  .hero-image-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, transparent 60%, var(--paper) 100%);
+  }
+  .hero-text-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 72px 80px 64px;
+    position: relative;
+  }
+  .hero-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--rust); margin-bottom: 24px;
+    opacity: 0; animation: fadein 0.8s ease 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 6vw, 88px);
+    font-weight: 900; line-height: 0.95; letter-spacing: -0.02em;
+    color: var(--ink); margin-bottom: 32px;
+    opacity: 0; animation: fadein 0.8s ease 0.5s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--rust); }
+  .hero-body {
+    font-size: 15px; line-height: 1.8; color: var(--warm-gray);
+    max-width: 360px; margin-bottom: 48px;
+    opacity: 0; animation: fadein 0.8s ease 0.7s forwards;
+  }
+  .hero-cta-group {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0; animation: fadein 0.8s ease 0.9s forwards;
+  }
+  .hero-scroll-hint {
+    position: absolute; bottom: 40px; left: 64px;
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm-gray);
+    opacity: 0; animation: fadein 1s ease 1.2s forwards;
+  }
+  .scroll-line { width: 48px; height: 1px; background: var(--warm-gray); }
+
+  /* JOURNAL GRID */
+  .journal-section { padding: 120px 48px; max-width: 1400px; margin: 0 auto; }
+  .journal-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; }
+  .journal-card { position: relative; cursor: pointer; overflow: hidden; border: 1px solid transparent; transition: border-color 0.3s; }
+  .journal-card:hover { border-color: var(--light-gray); }
+  .journal-card:hover .card-image img { transform: scale(1.04); }
+  .card-image { aspect-ratio: 3/4; overflow: hidden; position: relative; background: var(--ink); }
+  .card-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0.88; filter: sepia(0.1) contrast(1.05); transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+  .card-image-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(26,24,20,0.7) 0%, transparent 50%); }
+  .card-location { position: absolute; top: 20px; left: 20px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,240,232,0.85); background: rgba(26,24,20,0.35); backdrop-filter: blur(4px); padding: 6px 12px; }
+  .card-body { padding: 28px 28px 36px; background: var(--white); }
+  .card-date { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 12px; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; line-height: 1.2; color: var(--ink); margin-bottom: 12px; }
+  .card-excerpt { font-size: 13px; line-height: 1.75; color: var(--warm-gray); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-read-more { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rust); text-decoration: none; }
+  .card-read-more::after { content: '→'; transition: transform 0.2s; }
+  .card-read-more:hover::after { transform: translateX(4px); }
+  .journal-card.featured { grid-column: span 2; }
+  .journal-card.featured .card-image { aspect-ratio: 16/9; }
+  .journal-card.featured .card-title { font-size: 30px; }
+
+  /* GEAR STRIP */
+  .gear-section { padding: 60px 48px; background: var(--cream); border-top: 1px solid var(--light-gray); border-bottom: 1px solid var(--light-gray); }
+  .gear-inner { max-width: 1304px; margin: 0 auto; display: flex; align-items: center; gap: 64px; }
+  .gear-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--warm-gray); white-space: nowrap; }
+  .gear-divider { width: 40px; height: 1px; background: var(--light-gray); flex-shrink: 0; }
+  .gear-items { display: flex; gap: 48px; flex-wrap: wrap; align-items: center; }
+  .gear-item { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: var(--ink); opacity: 0.65; white-space: nowrap; text-decoration: none; transition: opacity 0.2s; }
+  .gear-item:hover { opacity: 1; color: var(--rust); }
+
+  /* HIRE STRIP */
+  .hire-section { background: var(--ink); color: var(--paper); padding: 120px 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .hire-eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--rust); margin-bottom: 24px; }
+  .hire-title { font-family: 'Playfair Display', serif; font-size: clamp(36px, 4vw, 56px); font-weight: 900; line-height: 1.05; margin-bottom: 32px; }
+  .hire-title em { font-style: italic; }
+  .hire-body { font-size: 15px; line-height: 1.85; color: rgba(244,240,232,0.65); max-width: 480px; margin-bottom: 48px; }
+  .hire-services { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 48px; }
+  .hire-service { display: flex; gap: 12px; align-items: flex-start; }
+  .service-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rust); margin-top: 8px; flex-shrink: 0; }
+  .service-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: rgba(244,240,232,0.8); line-height: 1.5; }
+  .stat-block { border-top: 1px solid rgba(244,240,232,0.12); padding: 32px 0; display: flex; justify-content: space-between; align-items: baseline; }
+  .stat-block:last-child { border-bottom: 1px solid rgba(244,240,232,0.12); }
+  .stat-number { font-family: 'Playfair Display', serif; font-size: 48px; font-weight: 900; color: var(--paper); }
+  .stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,240,232,0.45); text-align: right; max-width: 140px; line-height: 1.5; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-image-side { height: 50vh; }
+    .hero-text-side { padding: 60px 32px; }
+    .hero-scroll-hint { display: none; }
+    .journal-grid { grid-template-columns: 1fr; }
+    .journal-card.featured { grid-column: span 1; }
+    .journal-section { padding: 80px 24px; }
+    .gear-inner { flex-wrap: wrap; gap: 24px; }
+    .gear-section { padding: 40px 24px; }
+    .hire-section { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="transparent" id="main-nav">
+  <a href="index.html" class="nav-logo">Arandezvous ✦</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="blog.html">Journal</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="gear.html">Gear</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="work.html">Work With Me</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="menu-close">Close ✕</button>
+  <a href="index.html">Home</a>
+  <a href="blog.html">Journal</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="gear.html">Gear</a>
+  <a href="about.html">About</a>
+  <a href="work.html">Work With Me</a>
+</div>
+
+<section class="hero">
+  <div class="hero-image-side">
+    <img src="photos/DSCF0762.jpg" alt="Travel" />
+    <div class="hero-image-overlay"></div>
+  </div>
+  <div class="hero-text-side">
+    <p class="hero-eyebrow">Arandezvous — A traveler's open journal</p>
+    <h1 class="hero-title">A Camera<br>and a<br><em>Carry-On.</em></h1>
+    <p class="hero-body">Notes from the road. Honest observations from markets, back alleys, late-night kitchens, and every layover in between. No filters, no itineraries, just the real thing.</p>
+    <div class="hero-cta-group">
+      <a href="blog.html" class="btn-primary">Read the Journal</a>
+      <a href="work.html" class="btn-ghost">Work With Me</a>
+    </div>
+    <div class="hero-scroll-hint"><span class="scroll-line"></span>Scroll to explore</div>
+  </div>
+</section>
+
+<section class="journal-section" id="journal">
+  <div class="section-header">
+    <span class="section-label">Latest</span>
+    <h2 class="section-title">From the Field</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="journal-grid">
+    <article class="journal-card featured">
+      <div class="card-image">
+        <img src="photos/DSCF0876.jpg" alt="Oaxaca" />
+        <div class="card-image-overlay"></div>
+        <div class="card-location">Oaxaca, MX</div>
+      </div>
+      <div class="card-body">
+        <p class="card-date">May 24, 2025</p>
+        <h3 class="card-title">Grinding Mole on a 100-Year-Old Metate</h3>
+        <p class="card-excerpt">My arms gave out before the chiles did. A cooking class in the Tlacolula Valley where the molino is your shoulders, the recipe is muscle memory, and the mole negro tastes like the work you put into it.</p>
+        <a href="blog.html" class="card-read-more">Read Entry</a>
+      </div>
+    </article>
+    <article class="journal-card">
+      <div class="card-image">
+        <img src="photos/DSCF0942.jpg" alt="Mexico City" />
+        <div class="card-image-overlay"></div>
+        <div class="card-location">Oaxaca Valley, MX</div>
+      </div>
+      <div class="card-body">
+        <p class="card-date">May 22, 2025</p>
+        <h3 class="card-title">Red Clay, Wrapped in Yesterday's News</h3>
+        <p class="card-excerpt">In the pottery workshops outside Oaxaca, every piece gets wrapped in newspaper by hand. The barro rojo tradition, passed down through generations of women.</p>
+        <a href="blog.html" class="card-read-more">Read Entry</a>
+      </div>
+    </article>
+    <article class="journal-card">
+      <div class="card-image" style="aspect-ratio:4/3">
+        <img src="photos/DSCF0709.jpg" alt="Food" />
+        <div class="card-image-overlay"></div>
+        <div class="card-location">Oaxaca, MX</div>
+      </div>
+      <div class="card-body">
+        <p class="card-date">May 25, 2025</p>
+        <h3 class="card-title">Pan de Yema and the Tongs of Authority</h3>
+        <p class="card-excerpt">The bread ladies of the market run a tight ship. Point, nod, receive.</p>
+        <a href="blog.html" class="card-read-more">Read Entry</a>
+      </div>
+    </article>
+    <article class="journal-card" style="grid-column: span 2">
+      <div class="card-image" style="aspect-ratio:21/6">
+        <img src="photos/DSCF0713.jpg" alt="Travel" />
+        <div class="card-image-overlay"></div>
+        <div class="card-location">Tlacolula, MX</div>
+      </div>
+      <div class="card-body">
+        <p class="card-date">May 27, 2025</p>
+        <h3 class="card-title">Market Day Is a Contact Sport</h3>
+        <p class="card-excerpt">Mangoes, mameys, and the gentle chaos of a Sunday market in the valley.</p>
+        <a href="blog.html" class="card-read-more">Read Entry</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<div class="gear-section">
+  <div class="gear-inner">
+    <span class="gear-label">Shot On</span>
+    <div class="gear-divider"></div>
+    <div class="gear-items">
+      <a href="gear.html" class="gear-item">Fujifilm X100VI</a>
+      <a href="gear.html" class="gear-item">DJI Osmo Pocket 3</a>
+      <a href="gear.html" class="gear-item">DJI Osmo Nano</a>
+      <a href="gear.html" class="gear-item">DJI Mic</a>
+      <a href="gear.html" class="gear-item">35L Carry-On Only</a>
+    </div>
+  </div>
+</div>
+
+<section class="hire-section">
+  <div>
+    <p class="hire-eyebrow">Work With Me</p>
+    <h2 class="hire-title">I make places<br><em>feel real</em><br>for an audience.</h2>
+    <p class="hire-body">Background in sports performance content, currently documenting the world carry-on only. If you're a brand, tourism board, hotel, or publication looking for someone who can shoot, write, and build an audience, let's talk.</p>
+    <div class="hire-services">
+      <div class="hire-service"><div class="service-dot"></div><span class="service-label">Travel & Destination Content</span></div>
+      <div class="hire-service"><div class="service-dot"></div><span class="service-label">Brand Partnerships</span></div>
+      <div class="hire-service"><div class="service-dot"></div><span class="service-label">Social Media Strategy</span></div>
+      <div class="hire-service"><div class="service-dot"></div><span class="service-label">Photo + Video Production</span></div>
+    </div>
+    <a href="work.html" class="btn-primary">See What's Possible</a>
+  </div>
+  <div>
+    <div class="stat-block"><span class="stat-number">6+</span><span class="stat-label">Years in Content & Social Media</span></div>
+    <div class="stat-block"><span class="stat-number">12+</span><span class="stat-label">Countries Visited</span></div>
+    <div class="stat-block"><span class="stat-number">2</span><span class="stat-label">Citizenships, Zero Borders</span></div>
+    <div class="stat-block"><span class="stat-number">35L</span><span class="stat-label">Max Bag Size. Always.</span></div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-logo">Arandezvous ✦</span>
+  <span class="footer-copy">© 2025 — All rights reserved</span>
+  <div class="footer-social">
+    <a href="#">Instagram</a>
+    <a href="#">TikTok</a>
+    <a href="#">YouTube</a>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobile-menu').classList.add('open'));
+  document.getElementById('menu-close').addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
+</script>
+</body>
+</html>
