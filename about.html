@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Arandezvous</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 1304px;
+    margin: 0 auto;
+    padding: 80px 48px 120px;
+  }
+  .about-image-col { position: sticky; top: 80px; align-self: start; padding-right: 80px; }
+  .about-portrait {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    filter: sepia(0.08) contrast(1.05);
+    display: block;
+    margin-bottom: 24px;
+  }
+  .portrait-caption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+  }
+  .about-text-col { padding-left: 0; }
+  .about-intro {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 2.5vw, 32px);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-bottom: 48px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--light-gray);
+  }
+  .about-body {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+  .about-body p { margin-bottom: 24px; }
+  .about-body p:last-child { margin-bottom: 0; }
+  .about-pull {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(20px, 2vw, 26px);
+    font-style: italic;
+    font-weight: 700;
+    color: var(--rust);
+    border-left: 3px solid var(--rust);
+    padding-left: 28px;
+    margin: 48px 0;
+    line-height: 1.4;
+  }
+  .about-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-top: 1px solid var(--light-gray);
+    margin-top: 56px;
+  }
+  .fact-item {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--light-gray);
+  }
+  .fact-item:nth-child(odd) { padding-right: 32px; border-right: 1px solid var(--light-gray); }
+  .fact-item:nth-child(even) { padding-left: 32px; }
+  .fact-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+    margin-bottom: 8px;
+  }
+  .fact-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .influences {
+    margin-top: 56px;
+    padding-top: 48px;
+    border-top: 1px solid var(--light-gray);
+  }
+  .influences-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--warm-gray);
+    margin-bottom: 24px;
+  }
+  .influence-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .influence-item {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .influence-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-style: italic;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .influence-note {
+    font-size: 13px;
+    color: var(--warm-gray);
+    line-height: 1.5;
+  }
+  .about-cta {
+    margin-top: 56px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    .about-grid { grid-template-columns: 1fr; padding: 48px 24px 80px; }
+    .about-image-col { position: static; padding-right: 0; margin-bottom: 48px; }
+    .about-facts { grid-template-columns: 1fr; }
+    .fact-item:nth-child(odd) { padding-right: 0; border-right: none; }
+    .fact-item:nth-child(even) { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Arandezvous ✦</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="blog.html">Journal</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="gear.html">Gear</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="work.html">Work With Me</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="menu-close">Close ✕</button>
+  <a href="index.html">Home</a>
+  <a href="blog.html">Journal</a>
+  <a href="gallery.html">Gallery</a>
+  <a href="gear.html">Gear</a>
+  <a href="about.html">About</a>
+  <a href="work.html">Work With Me</a>
+</div>
+
+<div style="max-width: 1304px; margin: 0 auto; padding: 0 48px;">
+  <div class="page-header" style="padding-left: 0; padding-right: 0;">
+    <p class="page-header-eyebrow">The person behind the passport</p>
+    <h1 class="page-header-title">About<br><em>Me.</em></h1>
+  </div>
+</div>
+
+<div class="about-grid">
+  <div class="about-image-col">
+    <!-- Replace with your actual portrait -->
+    <img class="about-portrait" src="photos/DSCF0763.jpg" alt="Portrait" />
+    <p class="portrait-caption">The cocina, Tlacolula Valley — Swap this for your portrait when ready.</p>
+  </div>
+
+  <div class="about-text-col">
+    <p class="about-intro">"I travel carry-on only. I eat whatever's in front of me. I write what I actually felt, not what sounds good."</p>
+
+    <div class="about-body">
+      <p>By day, I build social media and content strategy for world-class sports performance brands. By every other waking hour, I'm chasing the feeling you get in a city you've never been to, when you've been walking for three hours with no destination and end up somewhere you'd never have found on purpose.</p>
+
+      <p>This journal started as an excuse to use a camera. It turned into something more honest than that. I started writing down what I was actually noticing and thinking, not the polished version you'd put in a caption. The missed connections, the bad bets on restaurants, the moments that only make sense days later when you're back home and the place starts to take shape in your memory.</p>
+
+      <p>I hold dual U.S. and Mexican citizenship. I run hot. I've made peace with arriving somewhere with more questions than answers, which is really just another way of saying I like going places that require some effort.</p>
+    </div>
+
+    <blockquote class="about-pull">
+      "The journey is part of the experience. An adventure in itself."
+      <br><span style="font-size: 13px; font-weight: 400; font-style: normal; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.1em; color: var(--warm-gray); display: block; margin-top: 12px;">— Anthony Bourdain</span>
+    </blockquote>
+
+    <div class="about-body">
+      <p>Bourdain and Hemingway are the north stars here. One taught me that a meal is a window into a culture and that you don't need to editorialize what you find on the other side of it. The other taught me that the best writing is what you leave out. I'm still learning both lessons.</p>
+
+      <p>The gear is a Fujifilm X100VI and whatever DJI equipment fits in the front pocket of my 35L backpack. No checked bags, ever. The constraint makes you choose better.</p>
+    </div>
+
+    <div class="about-facts">
+      <div class="fact-item">
+        <p class="fact-label">Based</p>
+        <p class="fact-value">Phoenix, AZ</p>
+      </div>
+      <div class="fact-item">
+        <p class="fact-label">Citizenship</p>
+        <p class="fact-value">U.S. + Mexico</p>
+      </div>
+      <div class="fact-item">
+        <p class="fact-label">Day Job</p>
+        <p class="fact-value">Social Media & Content</p>
+      </div>
+      <div class="fact-item">
+        <p class="fact-label">Bag Policy</p>
+        <p class="fact-value">35L. Always.</p>
+      </div>
+      <div class="fact-item">
+        <p class="fact-label">Last Destination</p>
+        <p class="fact-value">Oaxaca + CDMX, MX</p>
+      </div>
+      <div class="fact-item">
+        <p class="fact-label">Next Destination</p>
+        <p class="fact-value">TBD</p>
+      </div>
+    </div>
+
+    <div class="influences">
+      <p class="influences-label">Creative Influences</p>
+      <div class="influence-list">
+        <div class="influence-item">
+          <span class="influence-name">Anthony Bourdain</span>
+          <span class="influence-note">For proving that the best travel writing is really just honest human writing.</span>
+        </div>
+        <div class="influence-item">
+          <span class="influence-name">Ernest Hemingway</span>
+          <span class="influence-note">For what he left out, and where he did the leaving.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-cta">
+      <a href="work.html" class="btn-primary">Work With Me</a>
+      <a href="blog.html" class="btn-ghost">Read the Journal</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-logo">Arandezvous ✦</span>
+  <span class="footer-copy">© 2025 — All rights reserved</span>
+  <div class="footer-social">
+    <a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobile-menu').classList.add('open'));
+  document.getElementById('menu-close').addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
+</script>
+</body>
+</html>

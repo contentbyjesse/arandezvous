@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gear — Arandezvous</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .gear-wrap { max-width: 1304px; margin: 0 auto; padding: 0 48px 120px; }
+
+  /* TAB NAV */
+  .tab-nav { display: flex; gap: 0; border-bottom: 1px solid var(--light-gray); margin-bottom: 64px; }
+  .tab-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; background: none; border: none; border-bottom: 2px solid transparent; padding: 16px 28px 14px; cursor: pointer; color: var(--warm-gray); transition: all 0.2s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--rust); border-bottom-color: var(--rust); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* GEAR CATEGORY */
+  .gear-category { margin-bottom: 72px; }
+  .gear-category-header { display: flex; align-items: baseline; gap: 20px; margin-bottom: 36px; }
+  .gear-category-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; }
+  .gear-category-line { flex: 1; height: 1px; background: var(--light-gray); }
+
+  /* GEAR ITEM CARD */
+  .gear-list { display: flex; flex-direction: column; gap: 0; }
+  .gear-item-row {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 32px;
+    align-items: start;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--light-gray);
+    transition: background 0.2s;
+  }
+  .gear-item-row:first-child { border-top: 1px solid var(--light-gray); }
+  .gear-item-num { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.15em; color: var(--light-gray); padding-top: 4px; }
+  .gear-item-body {}
+  .gear-item-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .gear-item-desc { font-size: 14px; line-height: 1.75; color: var(--warm-gray); max-width: 540px; }
+  .gear-item-tag { display: inline-block; margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--rust); border: 1px solid var(--rust); padding: 4px 10px; }
+  .gear-item-action { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; padding-top: 4px; }
+  .gear-link { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--light-gray); padding-bottom: 2px; white-space: nowrap; transition: color 0.2s, border-color 0.2s; }
+  .gear-link:hover { color: var(--rust); border-color: var(--rust); }
+  .gear-affiliate-badge { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--warm-gray); }
+
+  /* BAG MANIFEST */
+  .bag-hero {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 56px;
+    margin-bottom: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  .bag-hero-title { font-family: 'Playfair Display', serif; font-size: 40px; font-weight: 900; line-height: 1; margin-bottom: 16px; }
+  .bag-hero-title em { font-style: italic; color: var(--rust); }
+  .bag-hero-sub { font-size: 14px; line-height: 1.8; color: rgba(244,240,232,0.65); }
+  .bag-stat { font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 900; color: var(--paper); }
+  .bag-stat-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,240,232,0.4); margin-bottom: 24px; }
+  .bag-rules { list-style: none; }
+  .bag-rule { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid rgba(244,240,232,0.08); font-size: 14px; line-height: 1.6; color: rgba(244,240,232,0.75); }
+  .bag-rule::before { content: '—'; color: var(--rust); flex-shrink: 0; font-family: 'IBM Plex Mono', monospace; }
+
+  /* PACKING LIST */
+  .packing-section { margin-bottom: 56px; }
+  .packing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .packing-col {}
+  .packing-col-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--rust); margin-bottom: 16px; }
+  .packing-item { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--light-gray); font-size: 14px; }
+  .packing-item:first-of-type { border-top: 1px solid var(--light-gray); }
+  .packing-item-name { color: var(--ink); }
+  .packing-item-qty { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--warm-gray); }
+  .packing-col:first-child { padding-right: 40px; border-right: 1px solid var(--light-gray); }
+  .packing-col:last-child { padding-left: 40px; }
+
+  @media (max-width: 900px) {
+    .gear-wrap { padding: 0 24px 80px; }
+    .gear-item-row { grid-template-columns: 1fr; gap: 12px; }
+    .gear-item-num { display: none; }
+    .gear-item-action { align-items: flex-start; }
+    .bag-hero { grid-template-columns: 1fr; gap: 32px; padding: 32px; }
+    .packing-grid { grid-template-columns: 1fr; }
+    .packing-col:first-child { padding-right: 0; border-right: none; padding-bottom: 32px; margin-bottom: 32px; border-bottom: 1px solid var(--light-gray); }
+    .packing-col:last-child { padding-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Arandezvous ✦</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="blog.html">Journal</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="gear.html" class="active">Gear</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="work.html">Work With Me</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="menu-close">Close ✕</button>
+  <a href="index.html">Home</a><a href="blog.html">Journal</a><a href="gallery.html">Gallery</a>
+  <a href="gear.html">Gear</a><a href="about.html">About</a><a href="work.html">Work With Me</a>
+</div>
+
+<div class="gear-wrap">
+  <div class="page-header" style="padding-left:0;padding-right:0;">
+    <p class="page-header-eyebrow">What's in the bag</p>
+    <h1 class="page-header-title">The<br><em>Kit.</em></h1>
+    <p class="page-header-sub">Everything I travel with. No fluff, no checked bags. Every item earns its spot.</p>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" data-tab="camera">Camera Gear</button>
+    <button class="tab-btn" data-tab="packing">Packing List</button>
+  </div>
+
+  <!-- CAMERA TAB -->
+  <div class="tab-content active" id="tab-camera">
+
+    <div class="gear-category">
+      <div class="gear-category-header">
+        <h2 class="gear-category-title">Photo & Video</h2>
+        <div class="gear-category-line"></div>
+      </div>
+      <div class="gear-list">
+
+        <div class="gear-item-row">
+          <span class="gear-item-num">01</span>
+          <div class="gear-item-body">
+            <p class="gear-item-name">Fujifilm X100VI</p>
+            <p class="gear-item-desc">The whole reason I stopped bringing a bigger camera. Fixed 23mm f/2 lens (equivalent to 35mm), in-body stabilization, and the best film simulations in the business. Fits in a jacket pocket. I shoot mostly in Acros and Classic Chrome. This is the camera.</p>
+            <span class="gear-item-tag">Primary Camera</span>
+          </div>
+          <div class="gear-item-action">
+            <a href="#" class="gear-link">Buy on Amazon ↗</a>
+            <a href="#" class="gear-link">B&H Photo ↗</a>
+            <span class="gear-affiliate-badge">Affiliate links</span>
+          </div>
+        </div>
+
+        <div class="gear-item-row">
+          <span class="gear-item-num">02</span>
+          <div class="gear-item-body">
+            <p class="gear-item-name">DJI Osmo Pocket 3</p>
+            <p class="gear-item-desc">My b-roll and vlog workhorse. The 1-inch sensor is absurdly good for something this small. I use it handheld for walking footage and mount it when I want locked-off shots. The ActiveTrack on this thing is borderline unfair.</p>
+            <span class="gear-item-tag">Primary Video</span>
+          </div>
+          <div class="gear-item-action">
+            <a href="#" class="gear-link">Buy on DJI ↗</a>
+            <a href="#" class="gear-link">Buy on Amazon ↗</a>
+            <span class="gear-affiliate-badge">Affiliate links</span>
+          </div>
+        </div>
+
+        <div class="gear-item-row">
+          <span class="gear-item-num">03</span>
+          <div class="gear-item-body">
+            <p class="gear-item-name">DJI Osmo Nano</p>
+            <p class="gear-item-desc">Backup camera and B-cam when I need two angles simultaneously. Lighter than my phone. I use it for table shots, tight spaces, and anywhere the Pocket 3 would draw too much attention. Pairs with the Mic perfectly.</p>
+            <span class="gear-item-tag">B-Camera</span>
+          </div>
+          <div class="gear-item-action">
+            <a href="#" class="gear-link">Buy on DJI ↗</a>
+            <a href="#" class="gear-link">Buy on Amazon ↗</a>
+            <span class="gear-affiliate-badge">Affiliate links</span>
+          </div>
+        </div>
+
+        <div class="gear-item-row">
+          <span class="gear-item-num">04</span>
+          <div class="gear-item-body">
+            <p class="gear-item-name">DJI Mic</p>
+            <p class="gear-item-desc">Wireless clip-on mic system. The sound difference between camera audio and a proper wireless lav on travel content is not subtle. Connects directly to the Pocket 3 and Nano. I clip one on whenever I'm narrating to camera, even casually.</p>
+            <span class="gear-item-tag">Audio</span>
+          </div>
+          <div class="gear-item-action">
+            <a href="#" class="gear-link">Buy on DJI ↗</a>
+            <a href="#" class="gear-link">Buy on Amazon ↗</a>
+            <span class="gear-affiliate-badge">Affiliate links</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="gear-category">
+      <div class="gear-category-header">
+        <h2 class="gear-category-title">Accessories & Support</h2>
+        <div class="gear-category-line"></div>
+      </div>
+      <div class="gear-list">
+        <div class="gear-item-row">
+          <span class="gear-item-num">05</span>
+          <div class="gear-item-body">
+            <p class="gear-item-name">Peak Design Capture Clip</p>
+            <p class="gear-item-desc">The X100VI lives on my strap, not in my bag. The Capture Clip means it's out and accessible without swinging around. Game-changer for street shooting when you want to grab it and go without thinking.</p>
+            <span class="gear-item-tag">Carry System</span>
+          </div>
+          <div class="gear-item-action">
+            <a href="#" class="gear-link">Buy on Amazon ↗</a>
+            <span class="gear-affiliate-badge">Affiliate links</span>
+          </div>
+        </div>
+        <div class="gear-item-row">
+          <span class="gear-item-num">06</span>
+          <div class="gear-item-body">
+            <p class="gear-item-name">Anker 733 Power Bank (10,000mAh)</p>
+            <p class="gear-item-desc">Compact enough to not feel it in the bag, powerful enough to charge the X100VI twice and keep the phone topped off all day. The built-in USB-C wall prong means one less brick to pack.</p>
+            <span class="gear-item-tag">Power</span>
+          </div>
+          <div class="gear-item-action">
+            <a href="#" class="gear-link">Buy on Amazon ↗</a>
+            <span class="gear-affiliate-badge">Affiliate links</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-camera -->
+
+  <!-- PACKING TAB -->
+  <div class="tab-content" id="tab-packing">
+
+    <div class="bag-hero">
+      <div>
+        <h2 class="bag-hero-title">The <em>35L</em> Rule</h2>
+        <p class="bag-hero-sub">One bag. Carry-on only. Domestic or international, three days or three weeks, this is the constraint that makes every trip better. You move faster, you think less about stuff, and you're never waiting at baggage claim.</p>
+      </div>
+      <div>
+        <div>
+          <p class="bag-stat">35L</p>
+          <p class="bag-stat-label">Max bag volume, always</p>
+        </div>
+        <ul class="bag-rules">
+          <li class="bag-rule">Everything must fit in a personal item or small carry-on.</li>
+          <li class="bag-rule">If something doesn't earn its spot twice, it gets cut next trip.</li>
+          <li class="bag-rule">Merino wool wherever possible. Wears multiple days.</li>
+          <li class="bag-rule">Running hot means fewer layers, lighter fabrics, no fleece.</li>
+          <li class="bag-rule">The camera sling counts as your personal item.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="packing-section">
+      <div class="section-header" style="margin-bottom: 40px;">
+        <span class="section-label">What I Pack</span>
+        <h2 class="section-title">Full Manifest</h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="packing-grid">
+        <div class="packing-col">
+          <p class="packing-col-label">Clothing</p>
+          <div class="packing-item"><span class="packing-item-name">Merino T-shirt (neutral)</span><span class="packing-item-qty">×3</span></div>
+          <div class="packing-item"><span class="packing-item-name">Linen button-down</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Chino shorts</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Travel pants (Vuori or similar)</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Merino underwear</span><span class="packing-item-qty">×3</span></div>
+          <div class="packing-item"><span class="packing-item-name">Merino socks</span><span class="packing-item-qty">×3</span></div>
+          <div class="packing-item"><span class="packing-item-name">Lightweight layer (no fleece)</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Swimwear (doubles as shorts)</span><span class="packing-item-qty">×1</span></div>
+
+          <p class="packing-col-label" style="margin-top: 32px;">Footwear</p>
+          <div class="packing-item"><span class="packing-item-name">Walking shoes (worn on plane)</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Sandals (minimal)</span><span class="packing-item-qty">×1</span></div>
+        </div>
+
+        <div class="packing-col">
+          <p class="packing-col-label">Tech & Gear</p>
+          <div class="packing-item"><span class="packing-item-name">Fujifilm X100VI</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">DJI Osmo Pocket 3</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">DJI Osmo Nano</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">DJI Mic</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Anker Power Bank 10,000mAh</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">USB-C cables</span><span class="packing-item-qty">×2</span></div>
+          <div class="packing-item"><span class="packing-item-name">SD cards (128GB)</span><span class="packing-item-qty">×3</span></div>
+          <div class="packing-item"><span class="packing-item-name">Noise-cancelling earbuds</span><span class="packing-item-qty">×1</span></div>
+
+          <p class="packing-col-label" style="margin-top: 32px;">Toiletries (all 3oz or TSA-compliant)</p>
+          <div class="packing-item"><span class="packing-item-name">Solid shampoo bar</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Deodorant (Native travel size)</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Sunscreen SPF 50+</span><span class="packing-item-qty">×1</span></div>
+          <div class="packing-item"><span class="packing-item-name">Medication + Supplements</span><span class="packing-item-qty">×1</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-packing -->
+
+</div>
+
+<footer>
+  <span class="footer-logo">Arandezvous ✦</span>
+  <span class="footer-copy">© 2025 — All rights reserved</span>
+  <div class="footer-social">
+    <a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobile-menu').classList.add('open'));
+  document.getElementById('menu-close').addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
+</script>
+</body>
+</html>

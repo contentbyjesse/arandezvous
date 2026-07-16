@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work With Me — Arandezvous</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400&family=IBM+Plex+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .work-wrap { max-width: 1304px; margin: 0 auto; padding: 0 48px 0; }
+
+  /* SERVICES */
+  .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--light-gray); margin-bottom: 2px; }
+  .service-card { background: var(--white); padding: 48px; transition: background 0.2s; }
+  .service-card:hover { background: var(--cream); }
+  .service-num { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--rust); margin-bottom: 20px; }
+  .service-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+  .service-desc { font-size: 14px; line-height: 1.8; color: var(--warm-gray); margin-bottom: 20px; }
+  .service-deliverables { list-style: none; }
+  .service-deliverable { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink); padding: 8px 0; border-bottom: 1px solid var(--light-gray); display: flex; gap: 10px; align-items: baseline; }
+  .service-deliverable:last-child { border-bottom: none; }
+  .service-deliverable::before { content: '→'; color: var(--rust); flex-shrink: 0; }
+
+  /* CREDENTIALS STRIP */
+  .creds-strip { background: var(--ink); color: var(--paper); padding: 80px 48px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-bottom: 0; }
+  .cred-item { padding: 0 40px; border-right: 1px solid rgba(244,240,232,0.1); }
+  .cred-item:first-child { padding-left: 0; }
+  .cred-item:last-child { border-right: none; }
+  .cred-num { font-family: 'Playfair Display', serif; font-size: 52px; font-weight: 900; line-height: 1; margin-bottom: 8px; }
+  .cred-label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,240,232,0.45); line-height: 1.5; }
+
+  /* WHY */
+  .why-section { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; padding: 100px 0; border-bottom: 1px solid var(--light-gray); margin-bottom: 80px; }
+  .why-left {}
+  .why-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 3.5vw, 48px); font-weight: 900; line-height: 1.05; margin-bottom: 28px; }
+  .why-title em { font-style: italic; }
+  .why-body { font-size: 15px; line-height: 1.9; color: var(--warm-gray); }
+  .why-body p { margin-bottom: 20px; }
+  .why-right { display: flex; flex-direction: column; gap: 0; }
+  .diff-item { padding: 28px 0; border-bottom: 1px solid var(--light-gray); }
+  .diff-item:first-child { border-top: 1px solid var(--light-gray); }
+  .diff-item-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+  .diff-item-desc { font-size: 13px; line-height: 1.75; color: var(--warm-gray); }
+
+  /* CONTACT */
+  .contact-section { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; padding-bottom: 120px; }
+  .contact-title { font-family: 'Playfair Display', serif; font-size: clamp(32px, 4vw, 52px); font-weight: 900; line-height: 1.05; margin-bottom: 20px; }
+  .contact-title em { font-style: italic; }
+  .contact-sub { font-size: 15px; line-height: 1.8; color: var(--warm-gray); margin-bottom: 32px; }
+  .contact-email-link { font-family: 'Playfair Display', serif; font-size: 22px; font-style: italic; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rust); padding-bottom: 2px; transition: color 0.2s; }
+  .contact-email-link:hover { color: var(--rust); }
+  .contact-form { display: flex; flex-direction: column; gap: 20px; }
+  .contact-field { display: flex; flex-direction: column; gap: 8px; }
+  .contact-field label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--warm-gray); }
+  .contact-field input, .contact-field textarea, .contact-field select { background: var(--white); border: 1px solid var(--light-gray); color: var(--ink); font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 300; padding: 14px 16px; outline: none; transition: border-color 0.2s; width: 100%; -webkit-appearance: none; }
+  .contact-field input:focus, .contact-field textarea:focus, .contact-field select:focus { border-color: var(--rust); }
+  .contact-field textarea { resize: vertical; min-height: 120px; }
+  .contact-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 900px) {
+    .work-wrap { padding: 0 24px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .creds-strip { grid-template-columns: 1fr 1fr; gap: 32px; padding: 60px 24px; }
+    .cred-item { padding: 0; border-right: none; }
+    .why-section { grid-template-columns: 1fr; gap: 48px; padding: 60px 0; }
+    .contact-section { grid-template-columns: 1fr; gap: 48px; padding-bottom: 80px; }
+    .contact-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Arandezvous ✦</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="blog.html">Journal</a></li>
+    <li><a href="gallery.html">Gallery</a></li>
+    <li><a href="gear.html">Gear</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="work.html" class="active">Work With Me</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="menu-close">Close ✕</button>
+  <a href="index.html">Home</a><a href="blog.html">Journal</a><a href="gallery.html">Gallery</a>
+  <a href="gear.html">Gear</a><a href="about.html">About</a><a href="work.html">Work With Me</a>
+</div>
+
+<div class="work-wrap">
+  <div class="page-header" style="padding-left:0;padding-right:0;">
+    <p class="page-header-eyebrow">Let's make something worth watching</p>
+    <h1 class="page-header-title">Work<br><em>With Me.</em></h1>
+    <p class="page-header-sub">Travel content, brand partnerships, and social strategy. I build audiences around places and experiences, carry-on only.</p>
+  </div>
+</div>
+
+<div class="services-grid" style="max-width: 1304px; margin: 0 auto 2px; padding: 0 48px; background: transparent; gap: 0; display: block;">
+  <!-- Inline the grid outside the wrap for full-bleed effect -->
+</div>
+
+<!-- SERVICES FULL WIDTH -->
+<div style="background: var(--light-gray); padding: 0 48px 2px;">
+  <div style="max-width: 1304px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--light-gray);">
+
+    <div class="service-card">
+      <p class="service-num">01</p>
+      <h3 class="service-title">Travel Content Creation</h3>
+      <p class="service-desc">Photo and video coverage of destinations, properties, and experiences. Shot carry-on only, which means I can be in places heavier setups can't. The content feels real because the process is.</p>
+      <ul class="service-deliverables">
+        <li class="service-deliverable">Short-form video (Reels, TikTok, Shorts)</li>
+        <li class="service-deliverable">Photo galleries (editorial + social formats)</li>
+        <li class="service-deliverable">Long-form travel journal entries</li>
+        <li class="service-deliverable">Behind-the-scenes content</li>
+      </ul>
+    </div>
+
+    <div class="service-card">
+      <p class="service-num">02</p>
+      <h3 class="service-title">Brand Partnerships</h3>
+      <p class="service-desc">Integrated, honest partnerships with travel, lifestyle, and gear brands. I don't promote things I don't use. That's not a pitch, it's just how this works. The audience can tell the difference.</p>
+      <ul class="service-deliverables">
+        <li class="service-deliverable">Dedicated content series</li>
+        <li class="service-deliverable">Product integration in travel content</li>
+        <li class="service-deliverable">Affiliate content and linking</li>
+        <li class="service-deliverable">Ambassador programs</li>
+      </ul>
+    </div>
+
+    <div class="service-card">
+      <p class="service-num">03</p>
+      <h3 class="service-title">Social Media Strategy</h3>
+      <p class="service-desc">6+ years building social media presence for major sports performance brands. I bring that same infrastructure thinking to travel and hospitality clients who want to build a real audience, not just post.</p>
+      <ul class="service-deliverables">
+        <li class="service-deliverable">Platform strategy and content calendars</li>
+        <li class="service-deliverable">Channel audits and growth planning</li>
+        <li class="service-deliverable">Consulting for in-house teams</li>
+        <li class="service-deliverable">Creator network connections</li>
+      </ul>
+    </div>
+
+    <div class="service-card">
+      <p class="service-num">04</p>
+      <h3 class="service-title">Press Trips & FAM Tours</h3>
+      <p class="service-desc">Tourism boards, hotels, and hospitality groups: I travel on assignment, document the experience honestly, and deliver content that actually converts. Dual U.S./Mexico citizenship, no visa friction for most markets.</p>
+      <ul class="service-deliverables">
+        <li class="service-deliverable">Full-trip documentation</li>
+        <li class="service-deliverable">Social coverage in real-time</li>
+        <li class="service-deliverable">Post-trip long-form feature</li>
+        <li class="service-deliverable">Reels, stills, and story content</li>
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- CREDS -->
+<div class="creds-strip">
+  <div class="cred-item"><p class="cred-num">6+</p><p class="cred-label">Years in Content & Social</p></div>
+  <div class="cred-item"><p class="cred-num">12+</p><p class="cred-label">Countries on Passport</p></div>
+  <div class="cred-item"><p class="cred-num">2</p><p class="cred-label">Citizenships, Zero Borders</p></div>
+  <div class="cred-item"><p class="cred-num">35L</p><p class="cred-label">Max Kit Size, Always</p></div>
+</div>
+
+<div class="work-wrap">
+
+  <!-- WHY ME -->
+  <div class="why-section">
+    <div class="why-left">
+      <h2 class="why-title">What makes this<br><em>different.</em></h2>
+      <div class="why-body">
+        <p>Most travel creators treat content as the product. I treat it as evidence. Evidence that a place is worth going to, that a brand fits naturally into a real trip, that an audience should trust the recommendation.</p>
+        <p>The sports performance background matters here. I've built content for organizations that demand performance data alongside the story. I bring that same rigor to travel, just with better food.</p>
+      </div>
+    </div>
+    <div class="why-right">
+      <div class="diff-item">
+        <p class="diff-item-title">Sports-Grade Content Infrastructure</p>
+        <p class="diff-item-desc">Workflow, cadence, and strategy built on 6+ years in professional sports performance content. Not a hobbyist with a camera.</p>
+      </div>
+      <div class="diff-item">
+        <p class="diff-item-title">Carry-On Only, Always</p>
+        <p class="diff-item-desc">No logistics delays. I can be somewhere and producing content the same day. Lighter footprint, faster turnaround, lower friction for hosts.</p>
+      </div>
+      <div class="diff-item">
+        <p class="diff-item-title">Dual Citizenship Advantage</p>
+        <p class="diff-item-desc">U.S. and Mexican passports. Fewer visa complications across Latin America and beyond. Practical, not just a talking point.</p>
+      </div>
+      <div class="diff-item">
+        <p class="diff-item-title">Honest Voice</p>
+        <p class="diff-item-desc">Bourdain-influenced approach. The food, the people, the neighborhood at 7am. Audiences follow people who tell them what something actually feels like.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact-section" id="contact">
+    <div>
+      <h2 class="contact-title">Let's talk<br>about the<br><em>project.</em></h2>
+      <p class="contact-sub">Pitches, press trips, partnerships, or just a strong lead on somewhere worth going. If it involves travel and making content people actually want to watch, I want to hear it.</p>
+      <a href="mailto:hello@acameraandacarryon.com" class="contact-email-link">hello@acameraandacarryon.com</a>
+    </div>
+    <div class="contact-form">
+      <div class="contact-row">
+        <div class="contact-field"><label>First Name</label><input type="text" placeholder="Your name" /></div>
+        <div class="contact-field"><label>Last Name</label><input type="text" placeholder="Last name" /></div>
+      </div>
+      <div class="contact-field"><label>Email</label><input type="email" placeholder="you@company.com" /></div>
+      <div class="contact-field"><label>Organization / Brand</label><input type="text" placeholder="Company name" /></div>
+      <div class="contact-field">
+        <label>Type of Inquiry</label>
+        <select>
+          <option value="">Select one</option>
+          <option>Press Trip / FAM Tour</option>
+          <option>Brand Partnership</option>
+          <option>Social Media Consulting</option>
+          <option>Content Creation Project</option>
+          <option>Hotel / Property Feature</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="contact-field"><label>Tell Me About It</label><textarea placeholder="What's the project? Where, when, what are you building toward?"></textarea></div>
+      <button class="btn-primary" style="align-self: flex-start; border: none; cursor: pointer;">Send It →</button>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="footer-logo">Arandezvous ✦</span>
+  <span class="footer-copy">© 2025 — All rights reserved</span>
+  <div class="footer-social">
+    <a href="#">Instagram</a><a href="#">TikTok</a><a href="#">YouTube</a>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobile-menu').classList.add('open'));
+  document.getElementById('menu-close').addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
+</script>
+</body>
+</html>
