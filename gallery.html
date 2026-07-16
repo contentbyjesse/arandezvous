@@ -19,11 +19,13 @@
   .filter-btn { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; background: transparent; color: var(--warm-gray); border: 1px solid var(--light-gray); padding: 8px 16px; cursor: pointer; transition: all 0.2s; }
   .filter-btn:hover, .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
-  /* MASONRY */
   .masonry {
     columns: 3;
     column-gap: 16px;
   }
+  @media (max-width: 900px) { .masonry { columns: 2; } }
+  @media (max-width: 580px) { .masonry { columns: 1; } .gallery-wrap { padding: 0 20px 80px; } }
+
   .masonry-item {
     break-inside: avoid;
     margin-bottom: 16px;
@@ -31,7 +33,9 @@
     overflow: hidden;
     cursor: pointer;
     background: var(--ink);
+    transition: opacity 0.3s;
   }
+  .masonry-item.hidden { display: none; }
   .masonry-item img {
     width: 100%;
     display: block;
@@ -43,53 +47,41 @@
   .masonry-item-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(26,24,20,0.75) 0%, transparent 50%);
-    opacity: 0;
-    transition: opacity 0.3s;
+    opacity: 0; transition: opacity 0.3s;
   }
   .masonry-item:hover .masonry-item-overlay { opacity: 1; }
   .masonry-item-info {
     position: absolute; bottom: 0; left: 0; right: 0;
     padding: 20px;
-    transform: translateY(8px);
-    opacity: 0;
+    transform: translateY(8px); opacity: 0;
     transition: all 0.3s;
   }
   .masonry-item:hover .masonry-item-info { opacity: 1; transform: translateY(0); }
   .masonry-item-loc { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(244,240,232,0.8); margin-bottom: 4px; }
   .masonry-item-caption { font-family: 'Playfair Display', serif; font-size: 14px; font-style: italic; color: var(--paper); line-height: 1.4; }
 
-  /* LIGHTBOX */
   .lightbox {
-    display: none;
-    position: fixed; inset: 0; z-index: 200;
+    display: none; position: fixed; inset: 0; z-index: 200;
     background: rgba(26,24,20,0.95);
-    align-items: center; justify-content: center;
-    padding: 40px;
+    align-items: center; justify-content: center; padding: 40px;
   }
   .lightbox.open { display: flex; }
   .lightbox-img { max-height: 85vh; max-width: 85vw; object-fit: contain; filter: sepia(0.05); }
   .lightbox-close { position: absolute; top: 24px; right: 40px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); background: none; border: none; cursor: pointer; transition: color 0.2s; }
   .lightbox-close:hover { color: var(--paper); }
-  .lightbox-caption { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); text-align: center; }
+  .lightbox-caption { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); text-align: center; white-space: nowrap; }
   .lightbox-caption-loc { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--warm-gray); margin-bottom: 6px; }
   .lightbox-caption-text { font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; color: var(--paper); }
   .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 18px; color: var(--warm-gray); background: none; border: none; cursor: pointer; padding: 16px; transition: color 0.2s; }
   .lightbox-nav:hover { color: var(--paper); }
   .lightbox-prev { left: 24px; }
   .lightbox-next { right: 24px; }
-
-  @media (max-width: 900px) {
-    .gallery-wrap { padding: 0 16px 80px; }
-    .masonry { columns: 2; }
-  }
-  @media (max-width: 480px) {
-    .masonry { columns: 1; }
-  }
+  .lightbox-counter { position: absolute; top: 28px; left: 50%; transform: translateX(-50%); font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--warm-gray); }
 </style>
 </head>
 <body>
 
-<nav id="main-nav">
+<nav class="nav">
   <a href="index.html" class="nav-logo">Arandezvous ✦</a>
   <ul class="nav-links">
     <li><a href="index.html">Home</a></li>
@@ -114,118 +106,275 @@
 
 <div class="gallery-wrap">
   <div class="page-header" style="padding-left:0;padding-right:0;">
-    <p class="page-header-eyebrow">Shot on Fujifilm X100VI</p>
+    <p class="page-header-eyebrow">Oaxaca, Mexico · 2025</p>
     <h1 class="page-header-title">Photo<br><em>Archive.</em></h1>
     <p class="page-header-sub">A visual field log. Everything shot carry-on only, no gear that doesn't earn its weight.</p>
   </div>
 
   <div class="filter-bar">
-    <button class="filter-btn active">All</button>
-    <button class="filter-btn">Markets</button>
-    <button class="filter-btn">Pottery</button>
-    <button class="filter-btn">Cooking</button>
-    <button class="filter-btn">People</button>
-    <button class="filter-btn">Streets</button>
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="markets">Markets</button>
+    <button class="filter-btn" data-filter="cooking">Cooking</button>
+    <button class="filter-btn" data-filter="pottery">Pottery</button>
+    <button class="filter-btn" data-filter="ruins">Ruins</button>
+    <button class="filter-btn" data-filter="mezcal">Mezcal</button>
+    <button class="filter-btn" data-filter="streets">Streets</button>
+    <button class="filter-btn" data-filter="people">People</button>
+    <button class="filter-btn" data-filter="alebrijes">Alebrijes</button>
   </div>
 
   <div class="masonry" id="masonry">
-    <div class="masonry-item" data-src="photos/DSCF0762.jpg" data-loc="Oaxaca Valley, MX" data-caption="The corn mural house. Blue tile paint, red gates.">
-      <img src="photos/DSCF0762.jpg" alt="Oaxaca Valley, MX" loading="lazy" />
+
+    <!-- ===== ZAPOTEC TRAVEL / MARKET + MOLE CLASS (Day 4) ===== -->
+
+    <div class="masonry-item" data-category="markets people" data-src="photos/zapotec-05.jpg" data-loc="Tlacolula Market, Oaxaca" data-caption="The mercado in full flight. Papel picado from floor to ceiling.">
+      <img src="photos/zapotec-05.jpg" alt="Tlacolula Market interior with papel picado" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Oaxaca Valley, MX</p><p class="masonry-item-caption">The corn mural house. Blue tile paint, red gates.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market · Oaxaca</p><p class="masonry-item-caption">The mercado in full flight. Papel picado from floor to ceiling.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0876.jpg" data-loc="Tlacolula Valley, MX" data-caption="Grinding mole the way it has always been done.">
-      <img src="photos/DSCF0876.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="markets people" data-src="photos/zapotec-01.jpg" data-loc="Tlacolula Market, Oaxaca" data-caption="Pan de yema by the kilo. The vendor's eyes say she's seen ten thousand tourists.">
+      <img src="photos/zapotec-01.jpg" alt="Market vendor with bread" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Grinding mole the way it has always been done.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market · Oaxaca</p><p class="masonry-item-caption">Pan de yema by the kilo. The vendor's eyes say she's seen ten thousand tourists.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0949.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="The potters of the red clay workshop.">
-      <img src="photos/DSCF0949.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+    <div class="masonry-item" data-category="markets people" data-src="photos/zapotec-04.jpg" data-loc="Tlacolula Market, Oaxaca" data-caption="Transaction. The universal language of a good mango.">
+      <img src="photos/zapotec-04.jpg" alt="Two women at market fruit stall" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">The potters of the red clay workshop.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market · Oaxaca</p><p class="masonry-item-caption">Transaction. The universal language of a good mango.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0817.jpg" data-loc="Tlacolula Valley, MX" data-caption="The comal never stops.">
-      <img src="photos/DSCF0817.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="markets streets" data-src="photos/DSCF0709.jpg" data-loc="Tlacolula Market, Oaxaca" data-caption="Pan de yema by the kilo.">
+      <img src="photos/DSCF0709.jpg" alt="Tlacolula Market" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">The comal never stops.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market · Oaxaca</p><p class="masonry-item-caption">Pan de yema by the kilo.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0813.jpg" data-loc="Tlacolula Valley, MX" data-caption="Mole negro, deconstructed. Chilhuacle and company.">
-      <img src="photos/DSCF0813.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="markets streets" data-src="photos/DSCF0740.jpg" data-loc="Tlacolula Market, Oaxaca" data-caption="Plátanos machos into the woven bag.">
+      <img src="photos/DSCF0740.jpg" alt="Tlacolula Market produce" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Mole negro, deconstructed. Chilhuacle and company.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market · Oaxaca</p><p class="masonry-item-caption">Plátanos machos into the woven bag.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0709.jpg" data-loc="Tlacolula Market, MX" data-caption="Pan de yema by the kilo.">
-      <img src="photos/DSCF0709.jpg" alt="Tlacolula Market, MX" loading="lazy" />
+    <div class="masonry-item" data-category="markets people" data-src="photos/DSCF0713.jpg" data-loc="Tlacolula Market, Oaxaca" data-caption="Market day negotiations.">
+      <img src="photos/DSCF0713.jpg" alt="Tlacolula Market vendors" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market, MX</p><p class="masonry-item-caption">Pan de yema by the kilo.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market · Oaxaca</p><p class="masonry-item-caption">Market day negotiations.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0858.jpg" data-loc="Tlacolula Valley, MX" data-caption="Metate work under the gaze of the mural.">
-      <img src="photos/DSCF0858.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <!-- MOLE CLASS -->
+
+    <div class="masonry-item" data-category="cooking people" data-src="photos/zapotec-22.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Learning the metate. Two women watching. Neither is impressed yet.">
+      <img src="photos/zapotec-22.jpg" alt="Cooking class metate grinding" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Metate work under the gaze of the mural.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Learning the metate. Two women watching. Neither is impressed yet.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0942.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="Wrapping barro rojo in yesterday's news.">
-      <img src="photos/DSCF0942.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/zapotec-34.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Chilhuacle negro, mulato, pasilla. The holy trinity of mole negro.">
+      <img src="photos/zapotec-34.jpg" alt="Mole negro ingredients overhead" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">Wrapping barro rojo in yesterday's news.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Chilhuacle negro, mulato, pasilla. The holy trinity of mole negro.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0809.jpg" data-loc="Tlacolula Valley, MX" data-caption="Masa in every color the valley grows.">
-      <img src="photos/DSCF0809.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0876.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Grinding mole the way it has always been done.">
+      <img src="photos/DSCF0876.jpg" alt="Metate grinding" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Masa in every color the valley grows.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Grinding mole the way it has always been done.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0740.jpg" data-loc="Tlacolula Market, MX" data-caption="Plátanos machos into the woven bag.">
-      <img src="photos/DSCF0740.jpg" alt="Tlacolula Market, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0858.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Metate work under the gaze of the mural.">
+      <img src="photos/DSCF0858.jpg" alt="Metate work" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market, MX</p><p class="masonry-item-caption">Plátanos machos into the woven bag.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Metate work under the gaze of the mural.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0856.jpg" data-loc="Tlacolula Valley, MX" data-caption="Chiles negros waiting for the stone.">
-      <img src="photos/DSCF0856.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0813.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Mole negro, deconstructed. Chilhuacle and company.">
+      <img src="photos/DSCF0813.jpg" alt="Mole negro ingredients" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">Chiles negros waiting for the stone.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Mole negro, deconstructed. Chilhuacle and company.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0713.jpg" data-loc="Tlacolula Market, MX" data-caption="Market day negotiations.">
-      <img src="photos/DSCF0713.jpg" alt="Tlacolula Market, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0809.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Masa in every color the valley grows.">
+      <img src="photos/DSCF0809.jpg" alt="Colored masa" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Market, MX</p><p class="masonry-item-caption">Market day negotiations.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Masa in every color the valley grows.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0827.jpg" data-loc="Tlacolula Valley, MX" data-caption="The ingredient tray. Sesame, chiles, and patience.">
-      <img src="photos/DSCF0827.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0827.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="The ingredient tray. Sesame, chiles, and patience.">
+      <img src="photos/DSCF0827.jpg" alt="Mole ingredient tray" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">The ingredient tray. Sesame, chiles, and patience.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">The ingredient tray. Sesame, chiles, and patience.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0944.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="Bubble wrap meets thousand-year-old technique.">
-      <img src="photos/DSCF0944.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0856.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Chiles negros waiting for the stone.">
+      <img src="photos/DSCF0856.jpg" alt="Chiles negros" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">Bubble wrap meets thousand-year-old technique.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Chiles negros waiting for the stone.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0927.jpg" data-loc="San Marcos Tlapazola, MX" data-caption="Every piece packed by hand, ledger kept by hand.">
-      <img src="photos/DSCF0927.jpg" alt="San Marcos Tlapazola, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0817.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="The comal never stops.">
+      <img src="photos/DSCF0817.jpg" alt="Comal cooking" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola, MX</p><p class="masonry-item-caption">Every piece packed by hand, ledger kept by hand.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">The comal never stops.</p></div>
     </div>
 
-    <div class="masonry-item" data-src="photos/DSCF0763.jpg" data-loc="Tlacolula Valley, MX" data-caption="The cocina. Clay pots, oilcloth, papel picado.">
-      <img src="photos/DSCF0763.jpg" alt="Tlacolula Valley, MX" loading="lazy" />
+    <div class="masonry-item" data-category="cooking" data-src="photos/zapotec-39.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Someone stamped a heart on the comal. These things matter.">
+      <img src="photos/zapotec-39.jpg" alt="Clay comal with heart stamp" loading="lazy" />
       <div class="masonry-item-overlay"></div>
-      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley, MX</p><p class="masonry-item-caption">The cocina. Clay pots, oilcloth, papel picado.</p></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Someone stamped a heart on the comal. These things matter.</p></div>
     </div>
-  </div>
-</div>
+
+    <div class="masonry-item" data-category="cooking" data-src="photos/zapotec-40.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="Mole negro on a clay plate. Six hours of work. Worth every minute.">
+      <img src="photos/zapotec-40.jpg" alt="Finished mole negro plate" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">Mole negro on a clay plate. Six hours of work. Worth every minute.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="cooking" data-src="photos/DSCF0763.jpg" data-loc="Tlacolula Valley, Oaxaca" data-caption="The cocina. Clay pots, oilcloth, papel picado.">
+      <img src="photos/DSCF0763.jpg" alt="Traditional cocina" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula Valley · Oaxaca</p><p class="masonry-item-caption">The cocina. Clay pots, oilcloth, papel picado.</p></div>
+    </div>
+
+    <!-- STREETS -->
+
+    <div class="masonry-item" data-category="streets" data-src="photos/DSCF0762.jpg" data-loc="Oaxaca Valley, Oaxaca" data-caption="The corn mural house. Blue tile paint, red gates.">
+      <img src="photos/DSCF0762.jpg" alt="Corn mural facade" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Oaxaca Valley · Oaxaca</p><p class="masonry-item-caption">The corn mural house. Blue tile paint, red gates.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="streets people" data-src="photos/zapotec-12.jpg" data-loc="Tlacolula, Oaxaca" data-caption="Late morning. Man on a scooter, dust still in the air.">
+      <img src="photos/zapotec-12.jpg" alt="Man on scooter" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula · Oaxaca</p><p class="masonry-item-caption">Late morning. Man on a scooter, dust still in the air.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="streets people" data-src="photos/zapotec-14.jpg" data-loc="Tlacolula, Oaxaca" data-caption="School uniforms and skull paintings. Oaxaca contains multitudes.">
+      <img src="photos/zapotec-14.jpg" alt="School kids on street" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Tlacolula · Oaxaca</p><p class="masonry-item-caption">School uniforms and skull paintings. Oaxaca contains multitudes.</p></div>
+    </div>
+
+    <!-- ===== MONTE ALBÁN + MEZCAL + BARRO NEGRO (Day 2) ===== -->
+
+    <div class="masonry-item" data-category="ruins" data-src="photos/monte-01.jpg" data-loc="Monte Albán, Oaxaca" data-caption="The south platform. Built when Rome was still a village.">
+      <img src="photos/monte-01.jpg" alt="Monte Albán pyramid" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Monte Albán · Oaxaca</p><p class="masonry-item-caption">The south platform. Built when Rome was still a village.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="ruins" data-src="photos/monte-08.jpg" data-loc="Monte Albán, Oaxaca" data-caption="A stele in the north platform. The glyphs are still arguing about what they mean.">
+      <img src="photos/monte-08.jpg" alt="Zapotec stone stele with glyphs" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Monte Albán · Oaxaca</p><p class="masonry-item-caption">A stele in the north platform. The glyphs are still arguing about what they mean.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="ruins" data-src="photos/monte-16.jpg" data-loc="Monte Albán, Oaxaca" data-caption="The main plaza. 2,500 years and the grass still grows.">
+      <img src="photos/monte-16.jpg" alt="Monte Albán main plaza" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Monte Albán · Oaxaca</p><p class="masonry-item-caption">The main plaza. 2,500 years and the grass still grows.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="ruins" data-src="photos/monte-24.jpg" data-loc="Monte Albán, Oaxaca" data-caption="Alfonso Caso, discoverer of Monte Albán. Cast in bronze, standing in weeds.">
+      <img src="photos/monte-24.jpg" alt="Alfonso Caso bronze relief sculpture" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Monte Albán · Oaxaca</p><p class="masonry-item-caption">Alfonso Caso, discoverer of Monte Albán. Cast in bronze, standing in weeds.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="people alebrijes" data-src="photos/monte-41.jpg" data-loc="San Antonio Arrazola, Oaxaca" data-caption="A worker at the alebrije workshop in San Antonio Arrazola. Fourteen colors on a surface the size of a thumb.">
+      <img src="photos/monte-41.jpg" alt="Alebrije painter at workshop, San Antonio Arrazola" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Antonio Arrazola · Oaxaca</p><p class="masonry-item-caption">A worker at the alebrije workshop. Fourteen colors on a surface the size of a thumb.</p></div>
+    </div>
+
+    <!-- MEZCAL -->
+
+    <div class="masonry-item" data-category="mezcal" data-src="photos/monte-27.jpg" data-loc="Oaxaca Valley, Oaxaca" data-caption="The tahona stone. A horse walks in circles and agave becomes something else entirely.">
+      <img src="photos/monte-27.jpg" alt="Tahona stone wheel at mezcal distillery" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Oaxaca Valley · Oaxaca</p><p class="masonry-item-caption">The tahona stone. A horse walks in circles and agave becomes something else entirely.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="mezcal people" data-src="photos/monte-35.jpg" data-loc="Capoatlán Distillery, Oaxaca" data-caption="Tasting room at Capoatlán. Tobalá joven, denominación de origen. The conversation at the next table was probably about the same thing.">
+      <img src="photos/monte-35.jpg" alt="Mezcal tasting at Capoatlán distillery" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Capoatlán Distillery · Oaxaca</p><p class="masonry-item-caption">Tasting room at Capoatlán. Tobalá joven, denominación de origen. The conversation at the next table was probably about the same thing.</p></div>
+    </div>
+
+    <!-- BARRO NEGRO -->
+
+    <div class="masonry-item" data-category="pottery markets" data-src="photos/monte-50.jpg" data-loc="Oaxaca City, Oaxaca" data-caption="Barro negro at night. That vase alone took three weeks.">
+      <img src="photos/monte-50.jpg" alt="Barro negro shop at night with large carved vase" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">Oaxaca City · Oaxaca</p><p class="masonry-item-caption">Barro negro at night. That vase alone took three weeks.</p></div>
+    </div>
+
+    <!-- ===== BARRO ROJO / RED CLAY WORKSHOP (Day 4) ===== -->
+
+    <div class="masonry-item" data-category="pottery people" data-src="photos/barro-45.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="The workshop floor. Every surface tells you something.">
+      <img src="photos/barro-45.jpg" alt="Pottery workshop interior" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">The workshop floor. Every surface tells you something.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery people" data-src="photos/barro-47.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Barro rojo in production. The women who know this clay are its language.">
+      <img src="photos/barro-47.jpg" alt="Pottery workshop active production" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Barro rojo in production. The women who know this clay are its language.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/barro-48.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="The drying room. Unfired bowls, fifty deep, stacked on newspapers.">
+      <img src="photos/barro-48.jpg" alt="Shelves of unfired red clay pottery" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">The drying room. Unfired bowls, fifty deep, stacked on newspapers.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/DSCF0949.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="The potters of the red clay workshop.">
+      <img src="photos/DSCF0949.jpg" alt="Barro rojo pottery workshop" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">The potters of the red clay workshop.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/barro-51.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Finished pieces in dappled light. The spoon is the detail that gets me.">
+      <img src="photos/barro-51.jpg" alt="Finished red clay pieces on a table" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Finished pieces in dappled light. The spoon is the detail that gets me.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/barro-53.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Three generations of muscle memory in a single clay vessel.">
+      <img src="photos/barro-53.jpg" alt="Red clay pottery detail" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Three generations of muscle memory in a single clay vessel.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery people" data-src="photos/barro-56.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Packing up to go. Everything wrapped in yesterday's newspaper.">
+      <img src="photos/barro-56.jpg" alt="Woman wrapping pottery to take home" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Packing up to go. Everything wrapped in yesterday's newspaper.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/DSCF0942.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Wrapping barro rojo in yesterday's news.">
+      <img src="photos/DSCF0942.jpg" alt="Pottery wrapped in newspaper" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Wrapping barro rojo in yesterday's news.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/DSCF0944.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Bubble wrap meets thousand-year-old technique.">
+      <img src="photos/DSCF0944.jpg" alt="Pottery packing" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Bubble wrap meets thousand-year-old technique.</p></div>
+    </div>
+
+    <div class="masonry-item" data-category="pottery" data-src="photos/DSCF0927.jpg" data-loc="San Marcos Tlapazola, Oaxaca" data-caption="Every piece packed by hand, ledger kept by hand.">
+      <img src="photos/DSCF0927.jpg" alt="Pottery ledger" loading="lazy" />
+      <div class="masonry-item-overlay"></div>
+      <div class="masonry-item-info"><p class="masonry-item-loc">San Marcos Tlapazola · Oaxaca</p><p class="masonry-item-caption">Every piece packed by hand, ledger kept by hand.</p></div>
+    </div>
+
+  </div><!-- /masonry -->
+</div><!-- /gallery-wrap -->
 
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox">
@@ -237,6 +386,7 @@
     <p class="lightbox-caption-loc" id="lb-loc"></p>
     <p class="lightbox-caption-text" id="lb-cap"></p>
   </div>
+  <p class="lightbox-counter" id="lb-counter"></p>
 </div>
 
 <footer>
@@ -248,26 +398,40 @@
 </footer>
 
 <script>
+  // FILTER
+  const allItems = Array.from(document.querySelectorAll('.masonry-item'));
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      allItems.forEach(item => {
+        if (filter === 'all' || item.dataset.category.includes(filter)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
     });
   });
 
-  const items = Array.from(document.querySelectorAll('.masonry-item'));
+  // LIGHTBOX
+  let visibleItems = () => allItems.filter(i => !i.classList.contains('hidden'));
   let current = 0;
   const lb = document.getElementById('lightbox');
   const lbImg = document.getElementById('lb-img');
   const lbLoc = document.getElementById('lb-loc');
   const lbCap = document.getElementById('lb-cap');
+  const lbCounter = document.getElementById('lb-counter');
 
   function openLightbox(idx) {
+    const items = visibleItems();
     current = idx;
     const item = items[idx];
     lbImg.src = item.dataset.src;
     lbLoc.textContent = item.dataset.loc;
     lbCap.textContent = item.dataset.caption;
+    lbCounter.textContent = (idx + 1) + ' / ' + items.length;
     lb.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
@@ -275,18 +439,30 @@
     lb.classList.remove('open');
     document.body.style.overflow = '';
   }
+  function navLightbox(dir) {
+    const items = visibleItems();
+    openLightbox((current + dir + items.length) % items.length);
+  }
 
-  items.forEach((item, i) => item.addEventListener('click', () => openLightbox(i)));
+  allItems.forEach((item) => {
+    item.addEventListener('click', () => {
+      const items = visibleItems();
+      const idx = items.indexOf(item);
+      if (idx >= 0) openLightbox(idx);
+    });
+  });
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
-  document.getElementById('lb-prev').addEventListener('click', () => openLightbox((current - 1 + items.length) % items.length));
-  document.getElementById('lb-next').addEventListener('click', () => openLightbox((current + 1) % items.length));
+  document.getElementById('lb-prev').addEventListener('click', () => navLightbox(-1));
+  document.getElementById('lb-next').addEventListener('click', () => navLightbox(1));
   document.addEventListener('keydown', e => {
     if (!lb.classList.contains('open')) return;
     if (e.key === 'Escape') closeLightbox();
-    if (e.key === 'ArrowLeft') openLightbox((current - 1 + items.length) % items.length);
-    if (e.key === 'ArrowRight') openLightbox((current + 1) % items.length);
+    if (e.key === 'ArrowLeft') navLightbox(-1);
+    if (e.key === 'ArrowRight') navLightbox(1);
   });
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
 
+  // NAV
   document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobile-menu').classList.add('open'));
   document.getElementById('menu-close').addEventListener('click', () => document.getElementById('mobile-menu').classList.remove('open'));
 </script>
